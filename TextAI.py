@@ -60,9 +60,9 @@ def ask_groq(text):
     return response.choices[0].message.content or "Groq returned an empty response."
 
 def on_hotkey():
-    ui_queue.put("Copying selected text...")
-
     def work():
+        # Read the selection before the output window is raised; otherwise
+        # taking focus here can send the simulated Ctrl+C to TextAI itself.
         text = copy_prompt()
 
         if not text:
