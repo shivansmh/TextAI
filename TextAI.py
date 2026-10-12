@@ -60,6 +60,8 @@ def ask_groq(text):
     return response.choices[0].message.content or "Groq returned an empty response."
 
 def on_hotkey():
+    ui_queue.put("Copying selected text...")
+
     def work():
         text = copy_prompt()
 
@@ -79,14 +81,96 @@ def on_hotkey():
 root = tk.Tk()
 root.title("TextAI Assistant")
 root.geometry("500x350")
+BG = "#151922"
+TEXT_BG = "#10141b"
+FG = "#e6edf3"
+MUTED_FG = "#aab6c5"
+BUTTON_BG = "#2a3341"
+BUTTON_ACTIVE_BG = "#3a4658"
+
+root.configure(bg=BG)
+root.tk_setPalette(
+    background=BG,
+    foreground=FG,
+    activeBackground=BUTTON_ACTIVE_BG,
+    activeForeground=FG,
+    disabledForeground=MUTED_FG,
+    highlightBackground=BG,
+    highlightColor=BUTTON_ACTIVE_BG,
+    insertBackground=FG,
+    selectBackground="#34506b",
+    selectForeground="#ffffff",
+    troughColor=TEXT_BG,
+)
 
 # Hide the window on startup so it runs completely in the background
 root.withdraw()
 
 # Status / Output Text Area
-output_box = scrolledtext.ScrolledText(root, wrap=tk.WORD, font=("Arial", 11))
-output_box.pack(expand=True, fill="both", padx=10, pady=10)
+output_box = scrolledtext.ScrolledText(
+    root,
+    wrap=tk.WORD,
+    font=("Arial", 11),
+    background=TEXT_BG,
+    foreground=FG,
+    insertbackground=FG,
+    selectbackground="#34506b",
+    selectforeground="#ffffff",
+    relief=tk.FLAT,
+    borderwidth=0,
+    padx=12,
+    pady=12,
+)
+output_box.pack(expand=True, fill="both", padx=12, pady=(12, 8))
+output_box.vbar.configure(
+    background=BUTTON_BG,
+    activebackground=BUTTON_ACTIVE_BG,
+    troughcolor=TEXT_BG,
+    relief=tk.FLAT,
+    borderwidth=0,
+    highlightthickness=0,
+)
 output_box.config(state=tk.DISABLED)
+
+def hide_window():
+    """Hide the output window without stopping the app or hotkey listener."""
+    root.withdraw()
+
+def quit_app():
+    """Stop the hotkey listener and exit the application."""
+    listener.stop()
+    root.destroy()
+
+controls = tk.Frame(root, bg=BG)
+controls.pack(fill="x", padx=12, pady=(0, 12))
+tk.Button(
+    controls,
+    text="Hide",
+    command=hide_window,
+    bg=BUTTON_BG,
+    fg=FG,
+    activebackground=BUTTON_ACTIVE_BG,
+    activeforeground=FG,
+    relief=tk.FLAT,
+    borderwidth=0,
+    padx=14,
+    pady=7,
+    cursor="hand2",
+).pack(side="left")
+tk.Button(
+    controls,
+    text="Quit TextAI",
+    command=quit_app,
+    bg=BUTTON_BG,
+    fg=FG,
+    activebackground=BUTTON_ACTIVE_BG,
+    activeforeground=FG,
+    relief=tk.FLAT,
+    borderwidth=0,
+    padx=14,
+    pady=7,
+    cursor="hand2",
+).pack(side="right")
 
 def process_queue():
     """Check the queue periodically, pop up the window, and update text."""
@@ -112,14 +196,12 @@ listener = keyboard.GlobalHotKeys({HOTKEY: on_hotkey})
 listener.start()
 
 def on_close():
-    """Cleanly stop listener and exit when GUI window is closed."""
-    listener.stop()
-    root.destroy()
-    sys.exit(0)
+    """Treat the title-bar close button as Hide so the hotkey stays active."""
+    hide_window()
 
 root.protocol("WM_DELETE_WINDOW", on_close)
 
-# Run the Tkinter main event loop (press Ctrl+C in terminal or close window to quit)
+# Run the Tkinter main event loop. Closing the window hides it; use Quit TextAI to exit.
 try:
     root.mainloop()
 except KeyboardInterrupt:
