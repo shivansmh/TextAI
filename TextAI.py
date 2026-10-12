@@ -13,8 +13,9 @@ kb = keyboard.Controller()
 ui_queue = queue.Queue()
 
 # Config -----------------------------------------------------------
-# Change this if your API key requires a different model ID
-MODEL = "llama-3.1-8b-instant"  # Or "llama-3.3-70b-versatile"
+# Groq retired llama-3.1-8b-instant; use its recommended replacement by default.
+# Override this with GROQ_MODEL if you want to use another model enabled for your account.
+MODEL = os.environ.get("GROQ_MODEL", "openai/gpt-oss-20b")
 API = os.environ.get("GROQ_API_KEY")
 HOTKEY = "<ctrl>+<alt>+g"
 INSTRUCTION = (
