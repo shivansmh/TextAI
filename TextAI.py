@@ -3,6 +3,8 @@ import time
 import sys
 import queue
 import threading
+import tkinter as tk
+from tkinter import scrolledtext
 from pynput import keyboard
 from groq import Groq
 import pyperclip
@@ -11,7 +13,8 @@ kb = keyboard.Controller()
 ui_queue = queue.Queue()
 
 # Config -----------------------------------------------------------
-MODEL = "llama-3.3-70b-versatile"
+# Change this if your API key requires a different model ID
+MODEL = "llama-3.1-8b-instant"  # Or "llama-3.3-70b-versatile"
 API = os.environ.get("GROQ_API_KEY")
 HOTKEY = "<ctrl>+<alt>+g"
 INSTRUCTION = (
@@ -19,7 +22,7 @@ INSTRUCTION = (
     "If it is a question, answer it. If it is a concept or paragraph, explain it simply and concisely. Keep the answer short and clear."
 )
 if not API:
-    sys.exit("API Key is not found.")
+    sys.exit("API Key is not found. Set your GROQ_API_KEY environment variable.")
 
 # --------------------------------------------------------------------
 
@@ -67,11 +70,57 @@ def on_hotkey():
         try:
             ui_queue.put(ask_groq(text))
         except Exception as e:
-            ui_queue.put(f"Error.\n{e}")
+            ui_queue.put(f"Error:\n{e}")
 
     threading.Thread(target=work, daemon=True).start()
 
-# Start the global hotkey listener
-with keyboard.GlobalHotKeys({HOTKEY: on_hotkey}) as listener:
-    print(f"Hotkey listener active: {HOTKEY}")
-    listener.join()
+# --- Tkinter GUI Setup ---
+root = tk.Tk()
+root.title("TextAI Assistant")
+root.geometry("500x350")
+
+# Hide the window on startup so it runs completely in the background
+root.withdraw()
+
+# Status / Output Text Area
+output_box = scrolledtext.ScrolledText(root, wrap=tk.WORD, font=("Arial", 11))
+output_box.pack(expand=True, fill="both", padx=10, pady=10)
+output_box.config(state=tk.DISABLED)
+
+def process_queue():
+    """Check the queue periodically, pop up the window, and update text."""
+    while not ui_queue.empty():
+        msg = ui_queue.get()
+        
+        root.deiconify()
+        root.lift()
+        root.focus_force()
+        
+        output_box.config(state=tk.NORMAL)
+        output_box.delete("1.0", tk.END)
+        output_box.insert(tk.END, msg)
+        output_box.see(tk.END)
+        output_box.config(state=tk.DISABLED)
+        
+    root.after(100, process_queue)
+
+root.after(100, process_queue)
+
+# Start the global hotkey listener cleanly
+listener = keyboard.GlobalHotKeys({HOTKEY: on_hotkey})
+listener.start()
+
+def on_close():
+    """Cleanly stop listener and exit when GUI window is closed."""
+    listener.stop()
+    root.destroy()
+    sys.exit(0)
+
+root.protocol("WM_DELETE_WINDOW", on_close)
+
+# Run the Tkinter main event loop (press Ctrl+C in terminal or close window to quit)
+try:
+    root.mainloop()
+except KeyboardInterrupt:
+    listener.stop()
+    sys.exit(0)
