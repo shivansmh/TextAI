@@ -13,8 +13,7 @@ kb = keyboard.Controller()
 ui_queue = queue.Queue()
 
 # Config -----------------------------------------------------------
-# Groq retired llama-3.1-8b-instant; use its recommended replacement by default.
-# Override this with GROQ_MODEL if you want to use another model enabled for your account.
+
 MODEL = os.environ.get("GROQ_MODEL", "openai/gpt-oss-20b")
 API = os.environ.get("GROQ_API_KEY")
 HOTKEY = "<ctrl>+<alt>+g"
@@ -28,6 +27,7 @@ if not API:
     sys.exit("API Key is not found. Set your GROQ_API_KEY environment variable.")
 
 # --------------------------------------------------------------------
+# MATHS optimization ---------------------------------------------------------------------------------
 
 SUPERSCRIPT = str.maketrans("0123456789+-=()in", "⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾ⁱⁿ")
 SUBSCRIPT = str.maketrans({
@@ -189,7 +189,7 @@ def format_response(response):
     response = re.sub(r"\n{3,}", "\n\n", response)
     return response.strip()
 
-
+# ----------------------------------------------------------------------------------------
 def copy_prompt():
     oldtext = pyperclip.paste()
     pyperclip.copy("")
@@ -226,8 +226,7 @@ def ask_groq(text):
 
 def on_hotkey():
     def work():
-        # Read the selection before the output window is raised; otherwise
-        # taking focus here can send the simulated Ctrl+C to TextAI itself.
+        
         text = copy_prompt()
 
         if not text:
@@ -304,7 +303,6 @@ def set_dark_window_chrome():
         return
 
 
-# Hide the window on startup so it runs completely in the background.
 root.withdraw()
 
 output_frame = tk.Frame(root, bg=BG)
