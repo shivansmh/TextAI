@@ -12,6 +12,10 @@ server/data/
 node_modules/
 server/node_modules/
 dist/
+desktop/node_modules/
+desktop/release/
+desktop/dist/
+desktop/.cache/
 
 # Python leftovers from the legacy desktop script
 __pycache__/

@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test server/test/*.test.js chrome-extension/test/*.test.js",
+    "test": "node --test server/test/*.test.js chrome-extension/test/*.test.js desktop/test/*.test.mjs",
     "test:backend": "npm --prefix server test",
     "package:extension": "node scripts/package-extension.mjs"
   }

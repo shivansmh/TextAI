@@ -1,0 +1,46 @@
+name: Build TextAI Desktop
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "desktop-v*"
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            target: win
+          - os: macos-latest
+            target: mac
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: desktop
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: desktop/package-lock.json
+      - name: Install dependencies
+        run: npm ci
+      - name: Run desktop tests
+        run: npm test
+      - name: Build installer
+        run: npm run dist:${{ matrix.target }}
+      - name: Upload installer artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: TextAI-${{ matrix.target }}
+          path: desktop/release/*
+          if-no-files-found: error

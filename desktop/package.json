@@ -1,0 +1,83 @@
+{
+  "name": "textai-desktop",
+  "productName": "TextAI",
+  "version": "1.0.0",
+  "description": "A private, global-hotkey desktop assistant powered by your Groq API key.",
+  "type": "module",
+  "main": "main.cjs",
+  "author": "TextAI",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shivansmh/TextAI.git"
+  },
+  "scripts": {
+    "start": "electron .",
+    "test": "node --test test/*.test.mjs",
+    "dist:win": "electron-builder --win nsis",
+    "dist:mac": "electron-builder --mac dmg",
+    "dist:linux": "electron-builder --linux AppImage",
+    "dist:all": "electron-builder --win nsis --mac dmg --linux AppImage"
+  },
+  "dependencies": {
+    "dompurify": "^3.4.17",
+    "marked": "^18.1.1"
+  },
+  "devDependencies": {
+    "electron": "^45.0.0",
+    "electron-builder": "^26.15.3"
+  },
+  "build": {
+    "appId": "com.textai.desktop",
+    "productName": "TextAI",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "main.cjs",
+      "preload.cjs",
+      "math.js",
+      "renderer/**/*",
+      "package.json",
+      "node_modules/marked/lib/marked.umd.js",
+      "node_modules/marked/LICENSE",
+      "node_modules/dompurify/dist/purify.min.js",
+      "node_modules/dompurify/LICENSE",
+      "node_modules/dompurify/LICENSE-MPL",
+      "!node_modules/**/*.map",
+      "!node_modules/marked/bin/**",
+      "!node_modules/marked/man/**",
+      "!node_modules/marked/lib/marked.esm.js",
+      "!node_modules/dompurify/src/**",
+      "!node_modules/dompurify/dist/purify.cjs.js",
+      "!node_modules/dompurify/dist/purify.es.mjs",
+      "!node_modules/dompurify/dist/purify.js",
+      "!node_modules/@types/**"
+    ],
+    "win": {
+      "target": ["nsis"],
+      "artifactName": "TextAI-Setup-${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    },
+    "mac": {
+      "target": ["dmg"],
+      "category": "public.app-category.productivity",
+      "artifactName": "TextAI-${version}-${arch}.${ext}"
+    },
+    "dmg": {
+      "title": "TextAI ${version}",
+      "contents": [
+        {"x": 130, "y": 220, "type": "file"},
+        {"x": 410, "y": 220, "type": "link", "path": "/Applications"}
+      ]
+    },
+    "linux": {
+      "target": ["AppImage"],
+      "category": "Utility"
+    }
+  }
+}

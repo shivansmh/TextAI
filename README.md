@@ -1,6 +1,8 @@
 # TextAI
 
-TextAI is being prepared as a Chrome extension backed by a small Node.js API. The original `TextAI.py` desktop app remains in the repository; the new release candidate lives in `chrome-extension/` and `server/`.
+TextAI is available here as three implementations: the original `TextAI.py` Tkinter utility, an Electron desktop app in `desktop/`, and a Chrome extension backed by the Node.js API in `chrome-extension/` and `server/`.
+
+For the tray-based desktop app, BYOK settings, cross-platform global hotkey, and Windows/macOS installers, see [`desktop/README.md`](desktop/README.md). The desktop app sends requests directly to Groq and stores the user's key locally using OS secure storage; it does not use the extension's quota proxy.
 
 The browser extension never receives or stores the Groq API key. It sends the selected text to the TextAI API, which applies the original concise-explanation system prompt and calls Groq with a server-side key. The API stores only a random installation ID and daily request counters; it does not save prompts or answers in its database.
 
@@ -101,6 +103,10 @@ The packager is a Node-only script (no external `zip` command) and refuses to bu
 
 ```text
 TextAI.py                         # Original Tkinter desktop version
+desktop/
+  main.cjs / preload.cjs          # Electron tray, global hotkey, secure key, Groq stream
+  renderer/                       # Dark frameless window, Markdown, settings
+  README.md                       # Desktop setup and Windows/macOS build guide
 chrome-extension/
   manifest.json                   # Manifest V3 permissions and browser shortcut
   config.js                       # Public API URL only; no secrets

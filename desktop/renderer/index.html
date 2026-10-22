@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TextAI</title>
+  <link rel="stylesheet" href="./styles.css">
+  <script src="../node_modules/marked/lib/marked.umd.js"></script>
+  <script src="../node_modules/dompurify/dist/purify.min.js"></script>
+  <script type="module" src="./renderer.js"></script>
+</head>
+<body>
+  <main class="app-shell">
+    <header class="titlebar" aria-label="TextAI window controls">
+      <div class="brand drag-region">
+        <span class="brand-mark" aria-hidden="true">T</span>
+        <div class="brand-copy"><strong>TextAI</strong><span>QUICK EXPLAINER</span></div>
+      </div>
+      <div class="title-actions no-drag">
+        <button class="icon-button" id="settings-toggle" type="button" title="Settings" aria-label="Open settings">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8.2a3.8 3.8 0 1 0 0 7.6 3.8 3.8 0 0 0 0-7.6Zm9 4.6v-1.6l-2.2-.6a7.3 7.3 0 0 0-.7-1.6l1.1-2-1.2-1.2-2 1.1a7.3 7.3 0 0 0-1.6-.7L13.8 4h-1.6l-.6 2.2a7.3 7.3 0 0 0-1.6.7L8 5.8 6.8 7l1.1 2a7.3 7.3 0 0 0-.7 1.6l-2.2.6v1.6l2.2.6c.1.6.4 1.1.7 1.6l-1.1 2L8 18.2l2-1.1c.5.3 1 .6 1.6.7l.6 2.2h1.6l.6-2.2c.6-.1 1.1-.4 1.6-.7l2 1.1 1.2-1.2-1.1-2c.3-.5.6-1 .7-1.6l2.2-.6Z"/></svg>
+        </button>
+        <button class="icon-button quit-button" id="quit-app" type="button" title="Quit TextAI" aria-label="Quit TextAI">⏻</button>
+        <button class="icon-button close-button" id="hide-window" type="button" title="Hide to tray" aria-label="Hide TextAI">×</button>
+      </div>
+    </header>
+
+    <section class="main-view" id="main-view">
+      <div class="selection-card">
+        <div class="section-label"><span class="pulse-dot"></span><span>SELECTED TEXT</span><span id="char-count">0 / 12,000</span></div>
+        <textarea id="source-text" maxlength="12000" placeholder="Select text anywhere and press Ctrl+Alt+G · Cmd+Shift+G on Mac, or paste text here…" spellcheck="false" aria-label="Text to explain"></textarea>
+        <div class="input-actions">
+          <span class="hint">Your selection is copied temporarily, then your clipboard text is restored.</span>
+          <button class="primary-button" id="explain-button" type="button"><span id="button-label">Explain</span><span class="button-arrow">↗</span></button>
+        </div>
+      </div>
+
+      <section class="answer-panel" aria-live="polite" aria-busy="false" id="answer-panel">
+        <div class="answer-heading"><span>EXPLANATION</span><span class="state-badge" id="state-badge">READY</span></div>
+        <div class="answer-content" id="answer-content"><p class="empty-state">Your explanation will appear here.<br><span>TextAI streams a short, clear answer from Groq.</span></p></div>
+      </section>
+      <div class="error-banner" id="error-banner" role="alert" hidden></div>
+      <footer class="statusbar"><span><i class="status-light" id="status-light"></i><span id="status-label">TRAY ACTIVE</span></span><span id="model-label">openai/gpt-oss-20b</span></footer>
+    </section>
+
+    <section class="settings-view" id="settings-view" hidden>
+      <div class="settings-heading"><div><span class="eyebrow">PREFERENCES</span><h1>Settings</h1></div><button class="text-button" id="back-button" type="button">← Back</button></div>
+      <div class="settings-card">
+        <label for="api-key">Groq API key</label>
+        <input id="api-key" type="password" autocomplete="off" placeholder="gsk_…" spellcheck="false">
+        <div class="key-state" id="key-state">Checking secure storage…</div>
+        <p class="field-note">Stored encrypted with your operating system’s secure credential storage. Your key is sent only to Groq when you request an answer.</p>
+        <label for="model-id">Groq model ID</label>
+        <input id="model-id" type="text" value="openai/gpt-oss-20b" spellcheck="false" autocomplete="off">
+        <p class="field-note">Uses the same model and explanation prompt as the original TextAI desktop app.</p>
+        <div class="settings-actions"><button class="danger-button" id="clear-key" type="button">Remove key</button><button class="primary-button" id="save-settings" type="button">Save settings</button></div>
+      </div>
+      <div class="privacy-note"><strong>BYOK · Your key, your account</strong><span>Requests go directly from this app to api.groq.com. TextAI does not operate a proxy or see your API key.</span></div>
+      <div class="error-banner" id="settings-error" role="alert" hidden></div>
+    </section>
+  </main>
+</body>
+</html>
