@@ -1,0 +1,33 @@
+{
+  "manifest_version": 3,
+  "name": "TextAI — Explain Selected Text",
+  "short_name": "TextAI",
+  "version": "1.0.0",
+  "description": "Explain selected text with a dark, compact AI assistant and a daily request allowance.",
+  "minimum_chrome_version": "111",
+  "permissions": [
+    "activeTab",
+    "contextMenus",
+    "scripting",
+    "storage"
+  ],
+  "host_permissions": [
+    "https://your-textai-api.example.com/*"
+  ],
+  "background": {
+    "service_worker": "service-worker.js"
+  },
+  "action": {
+    "default_title": "TextAI",
+    "default_popup": "popup.html"
+  },
+  "commands": {
+    "explain-selection": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+Y",
+        "mac": "Command+Shift+Y"
+      },
+      "description": "Explain the selected text with TextAI"
+    }
+  }
+}

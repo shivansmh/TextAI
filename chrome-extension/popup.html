@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="dark">
+    <title>TextAI</title>
+    <link rel="stylesheet" href="popup.css">
+  </head>
+  <body>
+    <main class="shell">
+      <header class="topbar">
+        <div class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></div>
+        <div class="brand-copy">
+          <h1>TextAI</h1>
+          <p>Quick clarity for selected text</p>
+        </div>
+        <span class="status-dot" id="status-dot" aria-hidden="true"></span>
+      </header>
+
+      <section class="quota-card" aria-label="Daily request allowance">
+        <div class="quota-head">
+          <span class="eyebrow">TODAY'S ALLOWANCE</span>
+          <span class="quota-count" id="quota-count">Checking…</span>
+        </div>
+        <div class="quota-track" role="progressbar" aria-label="Daily requests used" aria-valuemin="0" aria-valuemax="50" aria-valuenow="0" id="quota-progress">
+          <div class="quota-fill" id="quota-fill"></div>
+        </div>
+        <p class="quota-foot" id="quota-foot">Connecting to TextAI…</p>
+      </section>
+
+      <label class="section-label" for="source-text">SELECTED TEXT</label>
+      <div class="input-wrap">
+        <textarea id="source-text" rows="4" maxlength="8000" placeholder="Select text on a webpage, or paste it here…"></textarea>
+        <div class="input-actions">
+          <span id="char-count">0 / 8,000</span>
+          <button class="text-button" id="refresh-selection" type="button" title="Read the current webpage selection">Read selection</button>
+        </div>
+      </div>
+
+      <button class="primary-button" id="ask-button" type="button">
+        <span class="button-icon" aria-hidden="true">↗</span>
+        <span id="ask-label">Explain this</span>
+        <span class="button-shortcut">Ctrl ⇧ Y</span>
+      </button>
+
+      <section class="answer-section" aria-live="polite" aria-busy="false" id="answer-section">
+        <div class="answer-heading">
+          <span class="section-label">ANSWER</span>
+          <span class="answer-state" id="answer-state">READY</span>
+        </div>
+        <div class="answer-box" id="answer-box">
+          <p class="empty-answer">Your explanation will appear here.</p>
+        </div>
+      </section>
+
+      <div class="error-message" id="error-message" role="alert" hidden></div>
+      <footer class="footer">
+        <span>Private by design · prompts aren't stored</span>
+        <span class="footer-key">TEXTAI / 01</span>
+      </footer>
+    </main>
+    <script src="config.js"></script>
+    <script type="module" src="popup.js"></script>
+  </body>
+</html>
